@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini Apps Hub</title>
+  <style>
+    :root{
+      --bg1: #090d12; --bg2: #5563DE;
+      --card-bg: rgba(255,255,255,0.12);
+      --muted: rgba(255,255,255,0.8);
+    }
+    *{box-sizing:border-box}
+    body{
+      min-height:100vh;
+      margin:0;
+      font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: white;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:32px;
+      gap:24px;
+    }
+
+    .wrapper{
+      width:1100px;
+      max-width:calc(100% - 40px);
+      display:grid;
+      grid-template-columns: 380px 1fr;
+      gap:24px;
+      align-items:start;
+    }
+
+    /* Left pane: header + search + list */
+    .left{
+      background: var(--card-bg);
+      border-radius:16px;
+      padding:20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    }
+
+    .brand{
+      display:flex; gap:12px; align-items:center;
+    }
+    .logo{
+      width:56px; height:56px; border-radius:12px;
+      background:linear-gradient(135deg,#fff4,#fff2);
+      display:flex; align-items:center; justify-content:center;
+      color: #5563DE; font-weight:700; font-size:20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    }
+    h1{ font-size:20px; margin:0 }
+    p.sub{ margin:6px 0 16px; color:var(--muted); font-size:13px }
+
+    .search{
+      display:flex; gap:8px; margin-bottom:14px;
+    }
+    .search input{
+      flex:1; padding:10px 12px; border-radius:10px; border:none;
+      outline:none; font-size:14px; background: rgba(255,255,255,0.06); color: white;
+    }
+    .search button{
+      padding:10px 12px; border-radius:10px; border:none; cursor:pointer;
+      background: white; color: #5563DE; font-weight:600;
+    }
+
+    .apps-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      margin-top:8px;
+    }
+
+    .app-card{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      padding:12px;
+      border-radius:10px;
+      background: rgba(255,255,255,0.04);
+      cursor:pointer;
+      transition: transform .14s ease, background .14s ease;
+    }
+    .app-card:hover{ transform: translateY(-4px); background: rgba(255,255,255,0.065); }
+    .app-left{ display:flex; gap:12px; align-items:center; }
+    .app-icon{
+      width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+      font-size:20px;background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+      box-shadow: inset 0 -6px 18px rgba(0,0,0,0.12);
+    }
+    .app-meta{line-height:1}
+    .app-meta .title{ font-weight:700; font-size:15px }
+    .app-meta .desc{ font-size:12px; color:var(--muted); margin-top:3px }
+
+    .app-actions{ display:flex; gap:8px; align-items:center }
+    .open-btn{
+      background: rgba(255,255,255,0.12); border:none; color:white; padding:8px 10px; border-radius:8px; cursor:pointer;
+    }
+
+    /* Right pane: preview area */
+    .right{
+      background: var(--card-bg);
+      border-radius:16px;
+      padding:14px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+      min-height:420px;
+      display:flex; flex-direction:column;
+    }
+
+    .preview-header{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:8px }
+    .preview-title{ font-size:16px; font-weight:700 }
+    .preview-sub{ color:var(--muted); font-size:13px }
+
+    .preview{
+      flex:1;
+      border-radius:10px;
+      overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    iframe.preview-frame{
+      width:100%; height:100%; border:0;
+    }
+
+    .empty{
+      color:var(--muted); font-size:14px; padding:24px; text-align:center;
+    }
+
+    /* responsive */
+    @media (max-width:900px){
+      .wrapper{ grid-template-columns: 1fr; }
+      .left{ order:2 }
+      .right{ order:1; min-height:360px }
+    }
+
+    /* small helper */
+    .hint{ font-size:12px; color:var(--muted); margin-top:8px }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="left">
+      <div class="brand">
+        <div class="logo">Apps</div>
+        <div>
+          <h1>Mini Apps Hub</h1>
+          <p class="sub">Quick launcher for your small HTML apps — click a card to preview or open in a new tab.</p>
+        </div>
+      </div>
+
+      <div class="search">
+        <input id="search" placeholder="Search apps (e.g. todo, weather)..." oninput="renderApps()" />
+        <button onclick="renderApps()">Go</button>
+      </div>
+
+      <div class="apps-grid" id="appsGrid">
+        <!-- cards rendered by JS -->
+      </div>
+
+      <div class="hint">Tip: Place your app files (e.g. <code>age.html</code>, <code>password.html</code>) in the same folder as this index.</div>
+    </div>
+
+    <div class="right">
+      <div class="preview-header">
+        <div>
+          <div class="preview-title" id="previewTitle">Preview</div>
+          <div class="preview-sub" id="previewSubtitle">Select an app to preview it here</div>
+        </div>
+        <div>
+          <button id="openNew" class="open-btn" style="display:none" onclick="openInNewTab()">Open in new tab</button>
+        </div>
+      </div>
+
+      <div class="preview" id="previewArea">
+        <div class="empty" id="emptyMsg">No app selected — click any card on the left to preview.</div>
+        <!-- iframe created dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // EDIT THIS LIST to add/remove apps. {name, file, description, emoji}
+    const apps = [
+      { name: "Age Calculator", file: "Age/AgeCalculator.html", desc: "Calculate years, months & days", emoji: "🎂" },
+      { name: "Password Generator", file: "PasswordGenerator/PasswordGenerator.html", desc: "Create strong passwords", emoji: "🔐" },
+      { name: "Weather App", file: "Weather/Weather.html", desc: "Live weather by city", emoji: "🌤️" },
+      { name: "To-Do List", file: "ToDo/ToDo.html", desc: "Add, delete & save tasks", emoji: "📝" },
+      { name: "Calculator", file: "Calculator/Calculator.html", desc: "Calculator App", emoji: "💻" },
+    ];
+
+    const appsGrid = document.getElementById('appsGrid');
+    const searchInput = document.getElementById('search');
+    const previewArea = document.getElementById('previewArea');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewSubtitle = document.getElementById('previewSubtitle');
+    const openNewBtn = document.getElementById('openNew');
+    const emptyMsg = document.getElementById('emptyMsg');
+
+    function renderApps(){
+      const q = searchInput.value.trim().toLowerCase();
+      appsGrid.innerHTML = '';
+      const filtered = apps.filter(a => (a.name + ' ' + a.desc).toLowerCase().includes(q));
+      if(filtered.length === 0){
+        appsGrid.innerHTML = '<div style="color:rgba(255,255,255,0.7); padding:12px; border-radius:8px;">No apps found.</div>';
+        return;
+      }
+      filtered.forEach(app => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+        card.innerHTML = `
+          <div class="app-left">
+            <div class="app-icon">${app.emoji}</div>
+            <div class="app-meta">
+              <div class="title">${app.name}</div>
+              <div class="desc">${app.desc}</div>
+            </div>
+          </div>
+          <div class="app-actions">
+            <button class="open-btn" title="Preview">Preview</button>
+            <button class="open-btn" onclick="event.stopPropagation(); window.open('${app.file}','_blank')">Open</button>
+          </div>
+        `;
+        // preview when clicking card or preview button
+        card.addEventListener('click', () => previewApp(app));
+        card.querySelector('.open-btn').addEventListener('click', (e) => { e.stopPropagation(); previewApp(app); });
+        appsGrid.appendChild(card);
+      });
+    }
+
+    function previewApp(app){
+      // remove old iframe
+      const old = document.querySelector('iframe.preview-frame');
+      if(old) old.remove();
+
+      // create iframe
+      const iframe = document.createElement('iframe');
+      iframe.className = 'preview-frame';
+      iframe.src = app.file;
+      iframe.title = app.name;
+      iframe.loading = 'lazy';
+
+      // update header
+      previewTitle.textContent = app.name;
+      previewSubtitle.textContent = app.desc + " — Preview (same-origin required for full functionality).";
+      openNewBtn.style.display = 'inline-block';
+      openNewBtn.dataset.path = app.file;
+
+      // place iframe
+      emptyMsg.style.display = 'none';
+      previewArea.appendChild(iframe);
+    }
+
+    function openInNewTab(){
+      const path = openNewBtn.dataset.path;
+      if(path) window.open(path, '_blank');
+    }
+
+    // initial render
+    renderApps();
+
+    // Helpful: if you want one app to open by default on load, uncomment:
+    // previewApp(apps[0]);
+  </script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Age Calculator with Hot Counter</title>
+  <style>
+    /* Beautiful gradient background */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+
+    /* Main card */
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 350px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    input[type="date"] {
+      width: 80%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #fff;
+      color: #5563DE;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #5563DE;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .counter {
+      margin-top: 30px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 15px;
+      border-radius: 10px;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .counter span {
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎂 Age Calculator</h1>
+    <input type="date" id="birthdate">
+    <br>
+    <button onclick="calculateAge()">Calculate</button>
+    <div class="result" id="result"></div>
+    
+    <div class="counter">
+      🔥 Visitors: <span id="counter">0</span>
+    </div>
+
+    <div class="footer">
+      Made with ❤️ by Mahesh
+    </div>
+  </div>
+
+  <script>
+    // Age calculation logic
+    function calculateAge() {
+      const birthDate = document.getElementById('birthdate').value;
+      if (!birthDate) {
+        document.getElementById('result').innerText = "Please select your birth date.";
+        return;
+      }
+      const today = new Date();
+      const birth = new Date(birthDate);
+
+      let ageYears = today.getFullYear() - birth.getFullYear();
+      let ageMonths = today.getMonth() - birth.getMonth();
+      let ageDays = today.getDate() - birth.getDate();
+
+      if (ageDays < 0) {
+        ageMonths--;
+        ageDays += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
+      }
+      if (ageMonths < 0) {
+        ageYears--;
+        ageMonths += 12;
+      }
+
+      document.getElementById('result').innerHTML = 
+        `You are <strong>${ageYears}</strong> years, <strong>${ageMonths}</strong> months, and <strong>${ageDays}</strong> days old. 🎉`;
+    }
+
+    // Visitor counter using localStorage (simulated)
+    let count = localStorage.getItem('visitCount');
+    if (!count) {
+      count = 1;
+    } else {
+      count = parseInt(count) + 1;
+    }
+    localStorage.setItem('visitCount', count);
+    document.getElementById('counter').textContent = count;
+  </script>
+</body>
+</html>
