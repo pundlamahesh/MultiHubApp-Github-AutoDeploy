@@ -27,6 +27,12 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
+      - name: Export SSH Key
+        run: |
+          echo "EC2_SSH_KEY<<EOF" >> $GITHUB_ENV
+          terraform output -raw ec2_private_key >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+        working-directory: terraform
 
       - name: Get EC2 IP
         id: ip
@@ -39,7 +45,7 @@ jobs:
         with:
           host: ${{ env.EC2_IP }}
           username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ env.EC2_SSH_KEY }}
           script: |
             sudo yum update -y
             sudo yum install nginx -y
