@@ -2,9 +2,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "tls_private_key" "ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "aws_key_pair" "github" {
   key_name   = "github-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = tls_private_key.ssh.public_key_openssh
 }
 
 resource "aws_security_group" "web_sg" {
