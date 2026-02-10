@@ -27,7 +27,8 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-      - name: Export SSH Key
+       - name: Export SSH Key
+        shell: bash
         run: |
           echo "EC2_SSH_KEY<<EOF" >> $GITHUB_ENV
           terraform output -raw ec2_private_key >> $GITHUB_ENV
