@@ -8,12 +8,12 @@ resource "tls_private_key" "ssh" {
 }
 
 resource "aws_key_pair" "github" {
-  key_name   = "github-key"
+  key_name   = "github-key1"
   public_key = tls_private_key.ssh.public_key_openssh
 }
 
 resource "aws_security_group" "web_sg" {
-  name = "web-sg1"
+  name = "web-sg2"
 
   ingress {
     from_port   = 22
