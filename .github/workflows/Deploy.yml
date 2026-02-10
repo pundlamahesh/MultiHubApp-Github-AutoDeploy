@@ -27,7 +27,8 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve
         working-directory: terraform
-       - name: Export SSH Key
+
+      - name: Export SSH Key
         shell: bash
         run: |
           echo "EC2_SSH_KEY<<EOF" >> $GITHUB_ENV
@@ -36,7 +37,6 @@ jobs:
         working-directory: terraform
 
       - name: Get EC2 IP
-        id: ip
         run: |
           echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
         working-directory: terraform
@@ -60,5 +60,5 @@ jobs:
           host: ${{ env.EC2_IP }}
           username: ec2-user
           key: ${{ env.EC2_SSH_KEY }}
-          source: "MultiHubApp/*"
+          source: "MultiHubApp/"
           target: "/usr/share/nginx/html"
