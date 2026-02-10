@@ -13,7 +13,7 @@ resource "aws_key_pair" "github" {
 }
 
 resource "aws_security_group" "web_sg" {
-  name = "web-sg"
+  name = "web-sg1"
 
   ingress {
     from_port   = 22
