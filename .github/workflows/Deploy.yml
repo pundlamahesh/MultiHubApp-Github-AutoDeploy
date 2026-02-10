@@ -59,6 +59,6 @@ jobs:
         with:
           host: ${{ env.EC2_IP }}
           username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
+          key: ${{ env.EC2_SSH_KEY }}
           source: "MultiHubApp/*"
           target: "/usr/share/nginx/html"
